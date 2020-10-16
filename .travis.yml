@@ -1,14 +1,13 @@
 language: node_js
-notifications:
-  email: false
 node_js:
   - '12'
+notifications:
+  email: false
 
 jobs:
   include:
   - stage: test
     script:
-    - npm run build
-    - npm run lint
-    - npm run test
+    - yarn build
+    - yarn test
 
