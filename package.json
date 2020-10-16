@@ -9,7 +9,7 @@
 		"react": "^16.14.0",
 		"react-dom": "^16.14.0",
 		"react-scripts": "3.4.3",
-		"daypilot-pro-react": "https://npm.daypilot.org/daypilot-pro-react/trial/2020.4.4701.tar.gz"
+		"daypilot-pro-react": "https://npm.daypilot.org/daypilot-pro-react/trial/2018.2.3297.tar.gz"
 	},
 	"scripts": {
 		"start": "react-scripts start",

@@ -3646,9 +3646,9 @@ data-urls@^1.0.0, data-urls@^1.1.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
-"daypilot-pro-react@https://npm.daypilot.org/daypilot-pro-react/trial/2020.4.4682.tar.gz":
-  version "2020.4.4682"
-  resolved "https://npm.daypilot.org/daypilot-pro-react/trial/2020.4.4682.tar.gz#420bbb56dcb9c048e997ceb99291e6d4fa60ce06"
+"daypilot-pro-react@https://npm.daypilot.org/daypilot-pro-react/trial/2018.2.3297.tar.gz":
+  version "2018.2.3297"
+  resolved "https://npm.daypilot.org/daypilot-pro-react/trial/2018.2.3297.tar.gz#d2fdc6c0f0f4500e93ad5c9ad3ed05376760709a"
   dependencies:
     create-react-class ">=15.0.0"
     react ">=16.0.0"
