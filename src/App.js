@@ -5,7 +5,7 @@ import Scheduler from './scheduler/Scheduler';
 function App() {
 	return (
 		<div className='App'>
-			<h1>Hi, there!</h1>
+			<span>Hi, there!</span>
 			<Scheduler />
 		</div>
 	);
