@@ -1,51 +1,118 @@
 import React, {Component} from 'react';
 import {DayPilot, DayPilotScheduler} from 'daypilot-pro-react';
-import Zoom from './Zoom';
 
 class Scheduler extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			locale: 'en-ca',
-			cellWidthSpec: 'Fixed',
-			startDate: '2019-10-01',
-			days: 14,
-			scale: 'Day',
-			businessWeekends: true,
 			timeHeaders: [{groupBy: 'Month'}, {groupBy: 'Day', format: 'd'}],
-			cellWidth: 150,
+			scale: 'Day',
+			days: DayPilot.Date.today().daysInMonth(),
+			startDate: DayPilot.Date.today().firstDayOfMonth(),
+			timeRangeSelectedHandling: 'Enabled',
+			onTimeRangeSelected: function (args) {
+				var dp = this;
+				DayPilot.Modal.prompt('Create a new event:', 'Event 1').then(function (
+					modal
+				) {
+					dp.clearSelection();
+					if (!modal.result) {
+						return;
+					}
+					dp.events.add(
+						new DayPilot.Event({
+							start: args.start,
+							end: args.end,
+							id: DayPilot.guid(),
+							resource: args.resource,
+							text: modal.result,
+						})
+					);
+				});
+			},
+			eventMoveHandling: 'Update',
+			onEventMoved: function (args) {
+				this.message('Event moved: ' + args.e.text());
+			},
+			eventResizeHandling: 'Update',
+			onEventResized: function (args) {
+				this.message('Event resized: ' + args.e.text());
+			},
+			eventDeleteHandling: 'Update',
+			onEventDeleted: function (args) {
+				this.message('Event deleted: ' + args.e.text());
+			},
+			eventClickHandling: 'Disabled',
+			eventHoverHandling: 'Bubble',
+			bubble: new DayPilot.Bubble({
+				onLoad: function (args) {
+					// if event object doesn't specify "bubbleHtml" property
+					// this onLoad handler will be called to provide the bubble HTML
+					args.html = 'Event details';
+				},
+			}),
+			treeEnabled: true,
+		};
+	}
+
+	componentDidMount() {
+		// load resource and event data
+		this.setState({
 			resources: [
-				{name: 'Room 101', id: 'A'},
-				{name: 'Room 102', id: 'B'},
-				{name: 'Room 201', id: 'C'},
-				{name: 'Room 202', id: 'D'},
-				{name: 'Room 301', id: 'E'},
-				{name: 'Room 302', id: 'F'},
-				{name: 'Room 501', id: 'G'},
+				{
+					name: 'Group 1',
+					id: 'G1',
+					expanded: true,
+					children: [
+						{
+							name: 'Resource 1',
+							id: 'A',
+						},
+						{
+							name: 'Resource 2',
+							id: 'B',
+						},
+					],
+				},
+				{
+					name: 'Group 2',
+					id: 'G2',
+					expanded: true,
+					children: [
+						{
+							name: 'Resource 3',
+							id: 'C',
+						},
+						{
+							name: 'Resource 4',
+							id: 'D',
+						},
+					],
+				},
 			],
 			events: [
 				{
 					id: 1,
-					text: 'Sis',
-					start: '2019-10-02T00:00:00',
-					end: '2019-10-05T00:00:00',
+					text: 'Event 1',
+					start: '2018-05-02T00:00:00',
+					end: '2018-05-05T00:00:00',
 					resource: 'A',
 				},
 				{
 					id: 2,
-					text: 'Poppy',
-					start: '2019-10-03T00:00:00',
-					end: '2019-10-10T00:00:00',
-					resource: 'B',
+					text: 'Event 2',
+					start: '2018-05-03T00:00:00',
+					end: '2018-05-10T00:00:00',
+					resource: 'C',
 					barColor: '#38761d',
 					barBackColor: '#93c47d',
 				},
 				{
 					id: 3,
 					text: 'Event 3',
-					start: '2019-10-02T00:00:00',
-					end: '2019-10-08T00:00:00',
+					start: '2018-05-02T00:00:00',
+					end: '2018-05-08T00:00:00',
 					resource: 'D',
 					barColor: '#f1c232',
 					barBackColor: '#f1c232',
@@ -53,41 +120,13 @@ class Scheduler extends Component {
 				{
 					id: 4,
 					text: 'Event 3',
-					start: '2019-10-02T00:00:00',
-					end: '2019-10-08T00:00:00',
+					start: '2018-05-02T00:00:00',
+					end: '2018-05-08T00:00:00',
 					resource: 'E',
 					barColor: '#cc0000',
 					barBackColor: '#ea9999',
 				},
 			],
-		};
-	}
-
-	zoomChange(args) {
-		switch (args.level) {
-			case 'month':
-				this.setState({
-					startDate: DayPilot.Date.today().firstDayOfMonth(),
-					days: DayPilot.Date.today().daysInMonth(),
-					scale: 'Day',
-				});
-				break;
-			case 'week':
-				this.setState({
-					startDate: DayPilot.Date.today().firstDayOfWeek(),
-					days: 7,
-					scale: 'Day',
-				});
-				break;
-			default:
-				throw new Error('Invalid zoom level');
-		}
-	}
-
-	cellWidthChange(ev) {
-		var checked = ev.target.checked;
-		this.setState({
-			cellWidthSpec: checked ? 'Auto' : 'Fixed',
 		});
 	}
 
@@ -95,56 +134,8 @@ class Scheduler extends Component {
 		var {...config} = this.state;
 		return (
 			<div>
-				<div className='toolbar'>
-					<Zoom onChange={(args) => this.zoomChange(args)} />
-					<span className='toolbar-item'>
-						<label>
-							<input
-								type='checkbox'
-								checked={this.state.cellWidthSpec === 'Auto'}
-								onChange={(ev) => this.cellWidthChange(ev)}
-							/>{' '}
-							Auto width
-						</label>
-					</span>
-				</div>
-
 				<DayPilotScheduler
 					{...config}
-					onEventMoved={(args) => {
-						console.log(
-							'Event moved: ',
-							args.e.data.id,
-							args.newStart,
-							args.newEnd,
-							args.newResource
-						);
-						this.scheduler.message('Event moved: ' + args.e.data.text);
-					}}
-					onEventResized={(args) => {
-						console.log(
-							'Event resized: ',
-							args.e.data.id,
-							args.newStart,
-							args.newEnd
-						);
-						this.scheduler.message('Event resized: ' + args.e.data.text);
-					}}
-					onTimeRangeSelected={(args) => {
-						DayPilot.Modal.prompt('New event name', 'Event').then((modal) => {
-							this.scheduler.clearSelection();
-							if (!modal.result) {
-								return;
-							}
-							this.scheduler.events.add({
-								id: DayPilot.guid(),
-								text: modal.result,
-								start: args.start,
-								end: args.end,
-								resource: args.resource,
-							});
-						});
-					}}
 					ref={(component) => {
 						this.scheduler = component && component.control;
 					}}
