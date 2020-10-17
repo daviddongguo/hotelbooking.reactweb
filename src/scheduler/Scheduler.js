@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {DayPilot, DayPilotScheduler} from 'daypilot-pro-react';
+import {getAllRooms} from './roomManager';
 
 class Scheduler extends Component {
 	constructor(props) {
@@ -58,75 +59,48 @@ class Scheduler extends Component {
 
 	componentDidMount() {
 		// load resource and event data
-		this.setState({
-			resources: [
-				{
-					name: 'Group 1',
-					id: 'G1',
-					expanded: true,
-					children: [
+		getAllRooms().then((res) => {
+			if (res.Success) {
+				this.setState({
+					resources: res.data,
+					events: [
 						{
-							name: 'Resource 1',
-							id: 'A',
+							id: 1,
+							text: 'Event 1',
+							start: '2018-05-02T00:00:00',
+							end: '2018-05-05T00:00:00',
+							resource: 'A',
 						},
 						{
-							name: 'Resource 2',
-							id: 'B',
+							id: 2,
+							text: 'Event 2',
+							start: '2018-05-03T00:00:00',
+							end: '2018-05-10T00:00:00',
+							resource: 'C',
+							barColor: '#38761d',
+							barBackColor: '#93c47d',
+						},
+						{
+							id: 3,
+							text: 'Event 3',
+							start: '2018-05-02T00:00:00',
+							end: '2018-05-08T00:00:00',
+							resource: 'D',
+							barColor: '#f1c232',
+							barBackColor: '#f1c232',
+						},
+						{
+							id: 4,
+							text: 'Event 3',
+							start: '2018-05-02T00:00:00',
+							end: '2018-05-08T00:00:00',
+							resource: 'E',
+							barColor: '#cc0000',
+							barBackColor: '#ea9999',
 						},
 					],
-				},
-				{
-					name: 'Group 2',
-					id: 'G2',
-					expanded: true,
-					children: [
-						{
-							name: 'Resource 3',
-							id: 'C',
-						},
-						{
-							name: 'Resource 4',
-							id: 'D',
-						},
-					],
-				},
-			],
-			events: [
-				{
-					id: 1,
-					text: 'Event 1',
-					start: '2018-05-02T00:00:00',
-					end: '2018-05-05T00:00:00',
-					resource: 'A',
-				},
-				{
-					id: 2,
-					text: 'Event 2',
-					start: '2018-05-03T00:00:00',
-					end: '2018-05-10T00:00:00',
-					resource: 'C',
-					barColor: '#38761d',
-					barBackColor: '#93c47d',
-				},
-				{
-					id: 3,
-					text: 'Event 3',
-					start: '2018-05-02T00:00:00',
-					end: '2018-05-08T00:00:00',
-					resource: 'D',
-					barColor: '#f1c232',
-					barBackColor: '#f1c232',
-				},
-				{
-					id: 4,
-					text: 'Event 3',
-					start: '2018-05-02T00:00:00',
-					end: '2018-05-08T00:00:00',
-					resource: 'E',
-					barColor: '#cc0000',
-					barBackColor: '#ea9999',
-				},
-			],
+				});
+			}
 		});
 	}
 
