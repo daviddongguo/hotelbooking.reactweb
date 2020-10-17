@@ -10,7 +10,9 @@ class Scheduler extends Component {
 			timeHeaders: [{groupBy: 'Month'}, {groupBy: 'Day', format: 'd'}],
 			scale: 'Day',
 			days: DayPilot.Date.today().daysInMonth(),
-			startDate: DayPilot.Date.today().firstDayOfMonth(),
+			startDate: DayPilot.Date.today(),
+			businessBeginsHour: 14,
+			businessEndsHour: 10,
 			timeRangeSelectedHandling: 'Enabled',
 			onTimeRangeSelected: function (args) {
 				var dp = this;
@@ -55,53 +57,25 @@ class Scheduler extends Component {
 			}),
 			treeEnabled: true,
 			resources: [],
+			events: [],
 		};
 	}
 
 	componentDidMount() {
 		// load resource and event data
+		//fetch('https://localhost:5001/api/rooms')
 		fetch('https://davidwuhotelbooking.azurewebsites.net/api/rooms')
-			.then((response) => response.json())
-			.then((res) => {
-				this.setState({
-					resources: res.data,
-					events: [
-						{
-							id: 1,
-							text: 'Event 1',
-							start: '2018-05-02T00:00:00',
-							end: '2018-05-05T00:00:00',
-							resource: 'A',
-						},
-						{
-							id: 2,
-							text: 'Event 2',
-							start: '2018-05-03T00:00:00',
-							end: '2018-05-10T00:00:00',
-							resource: 'C',
-							barColor: '#38761d',
-							barBackColor: '#93c47d',
-						},
-						{
-							id: 3,
-							text: 'Event 3',
-							start: '2018-05-02T00:00:00',
-							end: '2018-05-08T00:00:00',
-							resource: 'D',
-							barColor: '#f1c232',
-							barBackColor: '#f1c232',
-						},
-						{
-							id: 4,
-							text: 'Event 3',
-							start: '2018-05-02T00:00:00',
-							end: '2018-05-08T00:00:00',
-							resource: 'E',
-							barColor: '#cc0000',
-							barBackColor: '#ea9999',
-						},
-					],
-				});
+			.then((roomsResponse) => roomsResponse.json())
+			.then((rooms) => {
+				//fetch('https://localhost:5001/api/bookings')
+				fetch('https://davidwuhotelbooking.azurewebsites.net/api/bookings')
+					.then((bookingsResponse) => bookingsResponse.json())
+					.then((bookings) => {
+						this.setState({
+							resources: rooms.data,
+							events: bookings.data,
+						});
+					});
 			});
 	}
 
