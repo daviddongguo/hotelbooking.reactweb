@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {DayPilot, DayPilotScheduler} from 'daypilot-pro-react';
-import {getAllRooms} from './roomManager';
+//import {getAllRooms} from './roomManager';
 
 class Scheduler extends Component {
 	constructor(props) {
@@ -54,13 +54,15 @@ class Scheduler extends Component {
 				},
 			}),
 			treeEnabled: true,
+			resources: [],
 		};
 	}
 
 	componentDidMount() {
 		// load resource and event data
-		getAllRooms().then((res) => {
-			if (res.Success) {
+		fetch('https://davidwuhotelbooking.azurewebsites.net/api/rooms')
+			.then((response) => response.json())
+			.then((res) => {
 				this.setState({
 					resources: res.data,
 					events: [
@@ -100,8 +102,7 @@ class Scheduler extends Component {
 						},
 					],
 				});
-			}
-		});
+			});
 	}
 
 	render() {
