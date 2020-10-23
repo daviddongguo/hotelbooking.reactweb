@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
 import {DayPilot, DayPilotScheduler} from 'daypilot-pro-react';
+import React, {Component} from 'react';
 //import {getAllRooms} from './roomManager';
 
 class Scheduler extends Component {
@@ -10,9 +10,10 @@ class Scheduler extends Component {
 			timeHeaders: [{groupBy: 'Month'}, {groupBy: 'Day', format: 'd'}],
 			scale: 'Day',
 			days: DayPilot.Date.today().daysInMonth(),
-			startDate: DayPilot.Date.today(),
+			startDate: DayPilot.Date.today().firstDayOfMonth(),
 			businessBeginsHour: 14,
 			businessEndsHour: 10,
+			allowEventOverlap: true,
 			timeRangeSelectedHandling: 'Enabled',
 			onTimeRangeSelected: function (args) {
 				var dp = this;
