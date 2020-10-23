@@ -1,6 +1,8 @@
+import axios from 'axios';
 import {DayPilot, DayPilotScheduler} from 'daypilot-pro-react';
 import React, {Component} from 'react';
-//import {getAllRooms} from './roomManager';
+import config from '../config/config';
+import {addBooking, deleteBooking} from './roomManager';
 
 class Scheduler extends Component {
 	constructor(props) {
@@ -24,28 +26,62 @@ class Scheduler extends Component {
 					if (!modal.result) {
 						return;
 					}
-					dp.events.add(
-						new DayPilot.Event({
-							start: args.start,
-							end: args.end,
-							id: DayPilot.guid(),
-							resource: args.resource,
-							text: modal.result,
+					const newEvent = new DayPilot.Event({
+						start: args.start,
+						end: args.end,
+						id: DayPilot.guid(),
+						resource: args.resource,
+						text: modal.result,
+					});
+					//
+					console.log(newEvent.data);
+					addBooking(newEvent.data)
+						.then((res) => {
+							console.log(res);
+							console.log(res.data);
+							dp.events.add(newEvent);
+							console.log(res);
 						})
-					);
+						.catch((error) => {
+							console.log('catched error');
+							console.log(error);
+						});
+					//
 				});
 			},
 			eventMoveHandling: 'Update',
 			onEventMoved: function (args) {
-				this.message('Event moved: ' + args.e.text());
+				console.log(args.e.data);
+				const urlStr = config.server + 'api/bookings/' + args.e.data.id;
+
+				axios
+					.patch(urlStr, args.e.data, config)
+					.then((res) => {
+						this.message('Booking Updated: ' + args.e.text());
+						console.log(res);
+					})
+					.catch((err) => console.log(err));
 			},
 			eventResizeHandling: 'Update',
 			onEventResized: function (args) {
-				this.message('Event resized: ' + args.e.text());
+				console.log(args.e.data);
+				const urlStr = config.server + 'api/bookings/' + args.e.data.id;
+
+				axios
+					.patch(urlStr, args.e.data, config)
+					.then((res) => {
+						this.message('Booking Updated: ' + args.e.text());
+						console.log(res);
+					})
+					.catch((err) => console.log(err));
 			},
 			eventDeleteHandling: 'Update',
 			onEventDeleted: function (args) {
-				this.message('Event deleted: ' + args.e.text());
+				console.log(args.e.data);
+				deleteBooking(args.e.data.id).then((res) => {
+					console.log(res);
+					this.message('deleted: ' + args.e.text());
+				});
 			},
 			eventClickHandling: 'Disabled',
 			eventHoverHandling: 'Bubble',
@@ -64,12 +100,12 @@ class Scheduler extends Component {
 
 	componentDidMount() {
 		// load resource and event data
-		//fetch('https://localhost:5001/api/rooms')
-		fetch('https://davidwuhotelbooking.azurewebsites.net/api/rooms')
+		fetch('https://localhost:5001/api/rooms')
+			// fetch('https://davidwuhotelbooking.azurewebsites.net/api/rooms')
 			.then((roomsResponse) => roomsResponse.json())
 			.then((rooms) => {
-				//fetch('https://localhost:5001/api/bookings')
-				fetch('https://davidwuhotelbooking.azurewebsites.net/api/bookings')
+				fetch('https://localhost:5001/api/bookings')
+					//fetch('https://davidwuhotelbooking.azurewebsites.net/api/bookings')
 					.then((bookingsResponse) => bookingsResponse.json())
 					.then((bookings) => {
 						this.setState({

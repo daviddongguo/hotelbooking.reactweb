@@ -4,6 +4,7 @@ import config from '../config/config';
 export const axiosConfig = {
 	withCredentials: true,
 	crossDomain: true,
+	headers: {'Access-Control-Allow-Origin': '*'},
 };
 export {config};
 

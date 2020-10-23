@@ -1,6 +1,6 @@
 const config = {
 	dev: {
-		server: 'https://localhost:5001',
+		server: 'https://localhost:5001/',
 	},
 	prod: {
 		server:
