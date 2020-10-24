@@ -100,19 +100,21 @@ class Scheduler extends Component {
 
 	componentDidMount() {
 		// load resource and event data
-		fetch('https://localhost:5001/api/rooms')
-			// fetch('https://davidwuhotelbooking.azurewebsites.net/api/rooms')
-			.then((roomsResponse) => roomsResponse.json())
-			.then((rooms) => {
-				fetch('https://localhost:5001/api/bookings')
-					//fetch('https://davidwuhotelbooking.azurewebsites.net/api/bookings')
-					.then((bookingsResponse) => bookingsResponse.json())
-					.then((bookings) => {
+		axios
+			.get(config.server + 'api/rooms', config)
+			.then((roomsResponse) => {
+				axios
+					.get(config.server + 'api/bookings', config)
+					.then((bookingsResponse) => {
+						console.log(roomsResponse);
 						this.setState({
-							resources: rooms.data,
-							events: bookings.data,
+							resources: roomsResponse.data.data,
+							events: bookingsResponse.data.data,
 						});
 					});
+			})
+			.catch((error) => {
+				console.log(error);
 			});
 	}
 
